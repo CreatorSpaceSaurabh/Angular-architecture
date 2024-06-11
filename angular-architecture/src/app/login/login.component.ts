@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { AuthService } from '../services/common/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +17,12 @@ export class LoginComponent implements OnInit {
   showPass: boolean = false;
   passwordType: string = 'password';
 
-  constructor(private formBuilder: FormBuilder, private router: Router) {
+  constructor(
+    private formBuilder: FormBuilder,
+    private router: Router,
+    private toastr: ToastrService,
+    private authService: AuthService
+  ) {
     this.loginForm = this.formBuilder.group({
       email: [
         '',
@@ -40,4 +47,46 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {}
+
+  get f() {
+    return this.loginForm.controls;
+  }
+
+  onSubmit() {
+    try {
+      this.submitted = true;
+
+      if (this.loginForm.invalid) {
+        alert('Form details are invalid');
+        return;
+      }
+
+      this.authService.login(this.loginForm.value).subscribe((res: any) => {
+        if (res.code == 200) {
+          this.toastr.success('Login successfull');
+          const userData = {
+            userId: res.data._id,
+            token: res.data.token,
+          };
+          localStorage.setItem('userData', JSON.stringify(userData));
+          this.router.navigate(['/']);
+        } else {
+          this.toastr.error(res.message || res.error);
+          console.log('Error occured');
+        }
+      });
+    } catch (error: any) {
+      throw new Error(`Error occured - ${error.message}`);
+    }
+  }
+
+  showHidePass(val?: any) {
+    if (this.passwordType === 'password') {
+      this.passwordType = 'text';
+      this.showPass = true;
+    } else {
+      this.passwordType = 'password';
+      this.showPass = false;
+    }
+  }
 }
