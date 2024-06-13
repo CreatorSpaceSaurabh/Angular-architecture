@@ -1,5 +1,9 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  CommonModule,
+  HashLocationStrategy,
+  LocationStrategy,
+} from '@angular/common';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -11,7 +15,6 @@ import { LoaderInterceptorService } from './services/interceptor/loader-intercep
 import { ToastrModule } from 'ngx-toastr';
 import { MaterialModule } from './material/material/material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
 
 @NgModule({
   declarations: [AppComponent],
@@ -20,9 +23,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     AppRoutingModule,
     BrowserModule,
     BrowserAnimationsModule,
-    FormsModule,
+    // FormsModule,
     ReactiveFormsModule,
-    MaterialModule,
     HttpClientModule,
     ToastrModule.forRoot(),
   ],
@@ -33,6 +35,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
       useClass: LoaderInterceptorService,
       multi: true,
     },
+    { provide: LocationStrategy, useClass: HashLocationStrategy },
   ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
