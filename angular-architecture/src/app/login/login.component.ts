@@ -23,6 +23,7 @@ export class LoginComponent implements OnInit {
     private toastr: ToastrService,
     private authService: AuthService
   ) {
+    console.log('Login component rendered ==');
     this.loginForm = this.formBuilder.group({
       email: [
         '',
